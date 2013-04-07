@@ -1,5 +1,5 @@
 //The order of digits are 4321
-module alu(input read,write,dig1,dig2,dig3,dig4,rst,clk,rev,exec,sign, output o1,o2,o3,o4, output [0:6] bcd);
+module pro_interface(input read,write,dig1,dig2,dig3,dig4,rst,clk,rev,exec,sign, output o1,o2,o3,o4, output [0:6] bcd);
 
 //Constants
 localparam RESET=4'd0;
@@ -206,7 +206,7 @@ begin
 									b3=7'b1111110; //-
 								else
 									b3=7'b1111111; //
-								
+
 								b4=7'b1110110; //=
 								b2=bcd_number(temp_value[7:4]);
 								b1=bcd_number(temp_value[3:0]);
