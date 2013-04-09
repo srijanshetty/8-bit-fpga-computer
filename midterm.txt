@@ -1,0 +1,36 @@
+-----------------------------------------------------------------------------------
+CS220 Project
+-----------------------------------------------------------------------------------
+GROUP MEMBERS: 	Srijan R Shetty
+				Shouvik Sachdeva
+				Ayush Mittal
+				Rahul Saini
+				Rohit Prakash Barnwal
+				Sharun Shaju
+-----------------------------------------------------------------------------------
+GITHUB LINK: https://github.com/srijanshetty/220_y11
+-----------------------------------------------------------------------------------
+OBJECTIVE: To buil the 220_y11 architecture according to the given specifications.
+-----------------------------------------------------------------------------------
+STATUS OF THE PROJECT:
+
+Modules Implemented
+1) 4-bit adder
+2) Ripple CLA adder
+3) Booth Multiplier
+4) One's Compliment
+5) Two's Compliment
+6) Display Module 
+7) Memory module
+8) Memory Multiplexer
+9) Processor*
+
+The Path Ahead
+The next step is to complete the processor module which implements the fetch and 
+execute cycle of the processor. We are half way through implementing this module
+and will complete it by the end of this week.
+Another feature that we wish to implement is a Programming interface which allows
+the user to write code via the FPGA itself, but this feature has been kept for 
+implementation at the last moment
+-----------------------------------------------------------------------------------
+*still to implement
