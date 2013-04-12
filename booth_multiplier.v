@@ -2,8 +2,14 @@ module booth_multiplier (
 	input clk, // Clock
 	input en, //Enable Signal
 	input [7:0] A,B,
-	output [15:0] Output
+	output [15:0] Output,
+	output ready
 );
+
+initial
+begin
+	$monitor("A=%d\t,B=%d\t,Output=%d\t,count=%d",A,B,Output,count);
+end
 
 //required variables
 reg [15:0] posA, negA;
@@ -13,6 +19,9 @@ reg prev;
 wire c_out1, c_out2;
 wire [15:0] posOutput, negOutput;
 reg [15:0] temp_Output;
+reg ready;
+reg [16:0] count;
+wire[1:0] ripple_ready;
 
 function [7:0] sign; //Function to check sign
   input [7:0] A;
@@ -48,6 +57,14 @@ begin
     posA=(posA<<1); //Right shift of posA
     negA=(negA<<1); //Right shift of negA
     tempB=(tempB>>1); //Left shift of B
+    if(count!=8)    
+    begin
+	count=count+1;
+	ready=0;
+    end
+    else
+	ready=1;
+    
   end
   else
     begin
@@ -56,12 +73,13 @@ begin
       tempB=absolute_value(B);
       prev=1'b0;
       temp_Output=16'd0;
+      count=0;
     end
 end
 
 //taking the negative of A
 twos_compliment COMPLIMENT1(.A(absolute_value(A)), .Output(compA));
 
-ripple_cla16 CLA1(.c_in(0), .A(temp_Output), .B(negA), .Output(posOutput), .c_out(c_out1));
-ripple_cla16 CLA2(.c_in(0), .A(temp_Output), .B(posA), .Output(negOutput), .c_out(c_out2));
+ripple_cla16 CLA1(.c_in(0), .A(temp_Output),.en(1), .B(negA), .Output(posOutput), .c_out(c_out1),.ready2(ripple_ready[0]));
+ripple_cla16 CLA2(.c_in(0), .A(temp_Output),.en(1), .B(posA), .Output(negOutput), .c_out(c_out2),.ready2(ripple_ready[1]));
 endmodule

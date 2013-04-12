@@ -9,14 +9,15 @@ module cla_adder(
 
 //initial
 //begin
-//	$monitor("A=%d\tB=%d\tOutput=%d\t,c_out=%d\t,count=%d\n",A,B,Output,c_out,count);
+//	$monitor("CLA - A=%d\tB=%d\tOutput=%d\t,c_out=%d\t,count=%d\n",A,B,Output,c_out,count);
+//	$display("CLA");
 //end
 
 reg [16:0] count;
 reg ready;
 always @(*)
 begin
-	if(en==1 && count!=1)
+	if(en==1 && count!=3)			//Actual number of counts taken =1
 	begin
 		ready=0;
 		count=count+1;
