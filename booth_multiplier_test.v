@@ -11,11 +11,12 @@ module test;
 	#1 en=0;
         #2 A=8'd129; B=8'd1;
 	#10 en=1;
-        #5000 $finish;
     end
     always
     begin
 	#1 clk=!clk;
+	if(ready==1)
+		$finish;
     end	
-    booth_multiplier BOOTH1(.en(en),.clk(clk), .A(A), .B(B), .ready(ready), .Output(Output));
+    booth_multiplier BOOTH1(.en(en),.clk(clk), .A(A), .B(B), .Output(Output), .ready(ready));
 endmodule

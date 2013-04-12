@@ -5,13 +5,12 @@ module test;
     reg [1:0] r0_state;
     reg [7:0] value1, value2;
     wire [7:0] Output1, Output2;
-
+    wire ready;
     // Initialize varibles
     initial
     begin
-        #1 r0_state=1; en=1; value1=8'd3; value2=8'd2;
-        #20 en=0;
-        #40 $finish;
+        #1 r0_state=2; en=1; value1=8'd1; value2=8'd2;
+   
     end
 
     // Monitoring the output
@@ -23,6 +22,7 @@ module test;
 
     // Some module
     r0_multiplexer MUX1(
+	.ready(ready),
        .clk(clk),
        .en(en),
        .state(r0_state),
@@ -34,5 +34,7 @@ module test;
     always
     begin
         #1 clk=!clk;
+	if(ready==1)
+		$finish;
     end
 endmodule

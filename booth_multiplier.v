@@ -6,10 +6,10 @@ module booth_multiplier (
 	output ready
 );
 
-initial
-begin
-	$monitor("A=%d\t,B=%d\t,Output=%d\t,count=%d",A,B,Output,count);
-end
+//initial
+//begin
+//	$monitor("A=%d\t,B=%d\t,Output=%d\t,count=%d\tready=%d\n",A,B,Output,count,ready);
+//end
 
 //required variables
 reg [15:0] posA, negA;
