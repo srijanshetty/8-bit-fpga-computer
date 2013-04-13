@@ -5,6 +5,12 @@ module processor (
    output output_halt,
    output [15:0] cc
 );
+    // For simulation
+    initial begin
+        #1 r0_multiplexer_en=0;r0_state=0; pc=0; cc=0;ir=0;r0=0;r1=0;r2=0;r3=0;r0_output1=0;r0_output2=0;
+        #1 memory_controller_en=0;state=0;input_data=0;input_reserve=0;input_data=0; address_data=0; address_reserve=0; address3=0;
+        #1 read_ir=0;read_data=0;read_reserve=0;read3=0; write_data=0;write_reserve=0; write3=0; halt=0;
+    end
 
     // For the r0 multiplexer
     reg r0_multiplexer_en;
@@ -105,88 +111,111 @@ module processor (
 
     //Perform computation
     always @(posedge clk) begin
-       // At zeroth cycle, we set pc
-       if(cc==0)
-       begin
-           pc=7'd32;
-           state=2'd1;
-           read_ir=1;
-       end
+       if(en==1) begin
+           // At zeroth cycle, we set pc
+           if(cc==0)
+           begin
+               pc=7'd32;
+               state=2'd1;
+               read_ir=1;
+           end
 
-       if(start) begin
-            cc=cc+1;
-            case(ir[7:4])
-                NOP: begin
-                        case (ir[3:0])
-                            IN: begin
-                                end
-                            OUT: begin
-                                end
-                            SLEEP:begin
-                                end
-                            HALT: begin
-                                end
-                           default : /* default */;
-                        endcase
-                    end
-                ADD: begin
-                        r0_state=R0_ADD;
-                    end
-                ADDi: begin
-                        //Selecting the register on the basis of the select value
-                        case (ir[3:2])
-                            R0: r0=r0+ir[1:0];
-                            R1: r1=r1+ir[1:0];
-                            R2: r2=r2+ir[1:0];
-                            R3: r3=r3+ir[1:0];
-                        endcase
-                        pc=pc+1;                                // Incrementing PC
-                    end
-                SUB: begin
-                        // r0=value1(ir)-value2(ir);
-                    end
-                MUL: begin
-                        // r0, r1
-                    end
-                NEG: begin
-                        r0_state=R0_NEG;
-                    end
-                BGEZ0: begin
-                    end
-                BGEZ1: begin
-                    end
-                MOVE: begin
-                        case (ir[3:2])
-                            R0: r0=value2(ir);
-                            R1: r1=value2(ir);
-                            R2: r2=value2(ir);
-                            R3: r3=value2(ir);
-                        endcase
-                        pc=pc+1;                                // Incrementing PC
-                    end
-                ST: begin
-                    end
-                LD: begin
-                    end
-                LI: begin
-                        case (ir[3:2])
-                            R0: r0=ir[1:0];
-                            R1: r1=ir[1:0];
-                            R2: r2=ir[1:0];
-                            R3: r3=ir[1:0];
-                        endcase
-                        pc=pc+1;                                 // Incrementing PC
-                    end
-                J: begin
-                        r3=pc+1;
-                        case (ir[3:2])
-                            R0: pc=r0;
-                            R1: pc=r1;
-                            R2: pc=r2;
-                        endcase
-                    end
-            endcase
-       end
+           if(start) begin
+                cc=cc+1;
+                case(ir[7:4])
+                    NOP: begin
+                            case (ir[3:0])
+                                IN: begin
+                                    end
+                                OUT: begin
+                                    end
+                                SLEEP:begin
+                                    end
+                                HALT: begin
+                                    end
+                               default : /* default */;
+                            endcase
+                        end
+                    ADD: begin
+                            r0_state=R0_ADD;
+                            r0_multiplexer_en=1;
+                            if(r0_multiplexer_ready==1) begin
+                                r0=r0_output1;
+                                pc=pc+1;
+                            end
+                        end
+                    ADDi: begin
+                            //Selecting the register on the basis of the select value
+                            case (ir[3:2])
+                                R0: r0=r0+ir[1:0];
+                                R1: r1=r1+ir[1:0];
+                                R2: r2=r2+ir[1:0];
+                                R3: r3=r3+ir[1:0];
+                            endcase
+                            pc=pc+1;                                // Incrementing PC
+                        end
+                    SUB: begin
+                            r0_state=R0_SUB;
+                            r0_multiplexer_en=1;
+                            if(r0_multiplexer_ready==1) begin
+                                r0=r0_output1;
+                                pc=pc+1;
+                            end
+                        end
+                    MUL: begin
+                            // r0, r1
+                        end
+                    NEG: begin
+                            r0_state=R0_NEG;
+                            r0_multiplexer_en=1;
+                            if(r0_multiplexer_ready==1) begin
+                                r0=r0_output1;
+                                pc=pc+1;
+                            end
+                        end
+                    BGEZ0: begin
+                        end
+                    BGEZ1: begin
+                        end
+                    MOVE: begin
+                            case (ir[3:2])
+                                R0: r0=value2(ir);
+                                R1: r1=value2(ir);
+                                R2: r2=value2(ir);
+                                R3: r3=value2(ir);
+                            endcase
+                            pc=pc+1;                                // Incrementing PC
+                        end
+                    ST: begin
+                        end
+                    LD: begin
+                        end
+                    LI: begin
+                            case (ir[3:2])
+                                R0: r0=ir[1:0];
+                                R1: r1=ir[1:0];
+                                R2: r2=ir[1:0];
+                                R3: r3=ir[1:0];
+                            endcase
+                            pc=pc+1;                                 // Incrementing PC
+                        end
+                    J: begin
+                            r3=pc+1;
+                            case (ir[3:2])
+                                R0: pc=r0;
+                                R1: pc=r1;
+                                R2: pc=r2;
+                            endcase
+                        end
+                    default: begin
+                                r0_multiplexer_en=0;
+                            end
+                endcase
+           end
+        end
+        else begin
+            r0_multiplexer_en=0;
+        end
     end
 
     // Multiplexer for r0
