@@ -15,10 +15,10 @@ module cla_adder(
     reg ready;                          // Redefine the output ready as reg
 
     // For computing the ready signal
-    reg [16:0] count;
+    reg [15:0] count;
 
     // Ready Signal
-    always @(clk) begin
+    always @(posedge clk) begin
     	if(en==1 && count!=2) begin		//Actual number of counts taken =1
     		ready=0;
     		count=count+1;
@@ -31,7 +31,7 @@ module cla_adder(
                 count=0;
             end
         end
-        // $display("\nCLA Adder: A=%d\tB=%d\tOutput=%d\tc_out=%d\tcount=%d\tready=%d",A,B,Output,c_out,count, ready);
+        // $display("CLA Adder: A=%d\tB=%d\tOutput=%d\tc_out=%d\tcount=%d\tready=%d",A,B,Output,c_out,count, ready);
     end
 
     //The generate and propogate signal

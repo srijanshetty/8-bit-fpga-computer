@@ -21,12 +21,12 @@ module ripple_cla8(
     wire [1:0] ready2;
 
     // For computing the ready signal
-    always @(clk) begin
+    always @(posedge clk) begin
     	if(ready2==2'b11)
     		ready=1;
     	else
     		ready=0;
-        // $display("\nRipple CLA8: A=%d\tB=%d\tOutput=%d\tReady=%d",A,B,Output,ready);
+        // $display("Ripple CLA8: A=%d\tB=%d\tOutput=%d\tReady=%d",A,B,Output,ready);
     end
 
     //Computing for subtraction

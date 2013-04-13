@@ -19,12 +19,12 @@ module twos_compliment (
     wire[1:0] temp_ready;
 
     // For the ready signal
-    always @(clk) begin
+    always @(posedge clk) begin
         if(temp_ready==2'b11)
             ready=1;
         else
             ready=0;
-        // $display("\nTwo's Compliment: A=%d\tOutput=%d\tReady=%d",A,Output,ready);
+        // $display("Two's Compliment: A=%d\tOutput=%d\tReady=%d",A,Output,ready);
     end
 
     ones_compliment COMPLIMENT1(

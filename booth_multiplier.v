@@ -60,7 +60,7 @@ module booth_multiplier (
       count=0;
       ready=0;
     end
-    $display("\nBOOTH: A=%d\tB=%d\tOutput=%d\tReady=%d",A,B,Output,ready);
+    // $display("BOOTH: A=%d\tB=%d\tOutput=%d\tReady=%d",A,B,Output,ready);
   end
 
   always @(posedge clk) begin

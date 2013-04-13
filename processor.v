@@ -3,7 +3,7 @@ module processor (
    input clk,                       // Clock
    input start,                     // Start Signal
    output output_halt,
-   output output_cc
+   output [7:0] cc
 );
 
     // Program counter
@@ -53,70 +53,48 @@ module processor (
     localparam HALT=4'b1111;
 
     //Flag to indicate whether the exectution has just started or not
-    always @(start or halt)
-    begin
+    always @(start or halt) begin
         if(halt==0)
             start_flag=1;
         else
             start_flag=0;
     end
 
-    //Load the program efficieny into output cc counter
-    assign output_cc=cc;
-
     //Perform computation
     always @(posedge clk)
-       if(start_flag)
-       begin
+       if(start_flag) begin
            // pc=
        end
 
-       if(start)
-       begin
+       if(start) begin
             cc=cc+1;
             opcode=ir[7:4];
             case(opcode)
-                NOP:
-                    begin
+                NOP: begin
                     end
-                ADD:
-                    begin
+                ADD: begin
                     end
-                ADDi:
-                    begin
+                ADDi: begin
                     end
-                SUB:
-                    begin
+                SUB: begin
                     end
-                MUL:
-                    begin
+                MUL: begin
                     end
-                NEG:
-                    begin
+                NEG: begin
                     end
-                BGEZ0:
-                    begin
+                BGEZ0: begin
                     end
-                BGEZ1:
-                    begin
+                BGEZ1: begin
                     end
-                MOVE:
-                    begin
+                MOVE: begin
                     end
-                ST:
-                    begin
+                ST: begin
                     end
-                LD:
-                    begin
+                LI: begin
                     end
-                LI:
-                    begin
-                    end
-                J:
-                    begin
+                J:  begin
                     end
             endcase
        end
     end
-
 endmodule

@@ -28,7 +28,7 @@ module r0_multiplexer (
     localparam MUL=2'd2;
     localparam NEG=2'd3;
 
-    always @(clk) begin
+    always @(posedge clk) begin
         if(en==1) begin
             case(state)
                 ADD: begin

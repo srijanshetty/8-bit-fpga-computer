@@ -20,12 +20,12 @@ module ripple_cla16(
     wire [3:0] temp_ready;
 
     // Ready signal
-    always @(clk) begin
+    always @(posedge clk) begin
         if(temp_ready==4'b1111)
             ready=1;
         else
             ready=0;
-        // $display("\nRipple CLA16: A=%d\tB=%d\tOutput=%d\tReady=%d",A,B,Output,ready);
+        // $display("Ripple CLA16: A=%d\tB=%d\tOutput=%d\tReady=%d",A,B,Output,ready);
     end
 
     //Xoring the values
