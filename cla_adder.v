@@ -7,27 +7,31 @@ module cla_adder(
     input c_in,
     output ready
 );
+    // For simulation only
+    initial begin
+        #1 count=16'd0; ready=0;
+    end
 
-    // For computing the temp_ready signal
+    reg ready;                          // Redefine the output ready as reg
+
+    // For computing the ready signal
     reg [16:0] count;
-    reg temp_ready;
 
-    assign ready=temp_ready;
-
+    // Ready Signal
     always @(clk) begin
     	if(en==1 && count!=2) begin		//Actual number of counts taken =1
-    		temp_ready=0;
+    		ready=0;
     		count=count+1;
     	end
     	else begin
         	if(en==1)
-        		temp_ready=1;
+        		ready=1;
             else begin
-                temp_ready=0;
+                ready=0;
                 count=0;
             end
         end
-        $display("\nCLA Adder: A=%d\tB=%d\tOutput=%d\tc_out=%d\tcount=%d\tready=%d",A,B,Output,c_out,count, temp_ready);
+        // $display("\nCLA Adder: A=%d\tB=%d\tOutput=%d\tc_out=%d\tcount=%d\tready=%d",A,B,Output,c_out,count, ready);
     end
 
     //The generate and propogate signal

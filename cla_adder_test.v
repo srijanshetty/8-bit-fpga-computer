@@ -3,6 +3,7 @@ module test;
     reg clk;
     reg en;
     reg c_in;
+    wire c_out;
     reg [3:0] A, B;
     wire [3:0] Output;         // The read data
     wire c_out,ready;

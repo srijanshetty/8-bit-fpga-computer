@@ -12,11 +12,12 @@ module ripple_cla16(
         #1 ready=0;
     end
 
+    reg ready;                          // Redefine the output ready as reg
+
     //Connecting wires
     wire temp1_c,temp2_c,temp3_c;
     wire [15:0] D;
     wire [3:0] temp_ready;
-    reg ready;
 
     // Ready signal
     always @(clk) begin
@@ -24,7 +25,7 @@ module ripple_cla16(
             ready=1;
         else
             ready=0;
-        $display("\nRipple CLA16: A=%d\tB=%d\tOutput=%d\tReady=%d",A,B,Output,ready);
+        // $display("\nRipple CLA16: A=%d\tB=%d\tOutput=%d\tReady=%d",A,B,Output,ready);
     end
 
     //Xoring the values

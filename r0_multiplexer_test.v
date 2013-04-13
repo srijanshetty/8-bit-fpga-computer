@@ -6,23 +6,21 @@ module test;
     reg [7:0] value1, value2;
     wire [7:0] Output1, Output2;
     wire ready;
+
     // Initialize varibles
-    initial
-    begin
-        #1 r0_state=2; en=1; value1=8'd1; value2=8'd2;
-   
+    initial begin
+        #1 r0_state=1; en=1; value1=8'd1; value2=8'd2;clk=0;
+        #20 $finish;
     end
 
     // Monitoring the output
-    initial
-    begin
-        #1 $monitor("\ntime=%d\tclk=%d",,clk);
-
+    always begin
+        #1 $display("\ntime=%d\tclk=%d\ten=%d",$time,clk,en);
     end
 
     // Some module
     r0_multiplexer MUX1(
-	.ready(ready),
+	   .ready(ready),
        .clk(clk),
        .en(en),
        .state(r0_state),
@@ -34,7 +32,5 @@ module test;
     always
     begin
         #1 clk=!clk;
-	if(ready==1)
-		$finish;
     end
 endmodule
