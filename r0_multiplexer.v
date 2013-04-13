@@ -80,10 +80,24 @@ module r0_multiplexer (
                         else
                             ready=0;
                     end
+                default: begin
+                            ripple_add_en=0;
+                            ripple_sub_en=0;
+                            booth_en=0;
+                            twos_compliment_en=0;
+                            ready=0;
+                        end
             endcase
             // Displaying the important parameters
         end
-        $display("R0 MULTIPLEXER:\tstate=%d\tenable=%d\tvalue1=%d\tvalue2=%d\tOutput1=%d\tOutput2=%d\tready=%d", state, en,value1,value2,Output1,Output2,multiplier_output,ready);
+        else begin
+            ready=0;
+            ripple_add_en=0;
+            ripple_sub_en=0;
+            booth_en=0;
+            twos_compliment_en=0;
+        end
+        $display("R0 MULTIPLEXER:\ten=%d\tstate=%d\tvalue1=%d\tvalue2=%d\tOutput1=%d\tOutput2=%d\tready=%d", en,state,value1,value2,Output1,Output2,ready);
     end
 
     // Adder
@@ -111,7 +125,7 @@ module r0_multiplexer (
     // // Multiplier
     // booth_multiplier Booth(
     //     .clk(clk),
-        // .en(booth_en),
+    //     .en(booth_en),
     //     .A(value1),.B(value2),
     //     .Output(multiplier_output),.ready(booth_ready)
     // );

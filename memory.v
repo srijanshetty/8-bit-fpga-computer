@@ -37,7 +37,7 @@ module memory(
                 count=0;
             end
         end
-        $display("Memory Module:\tread=%d\twrite=%d\tRAM[%d]=%d", read,write,address,RAM[address]);
+        $display("Memory Module:\ten=%dread=%d\twrite=%d\tRAM[%d]=%d",en,read,write,address,RAM[address]);
       end
 
     //Reading and writing data

@@ -4,7 +4,7 @@ module memory_controller_test;
     // Registers
     reg clk;
     reg en;
-    reg state;                                                          // Clock Enable
+    reg [1:0] state;                                                    // Clock Enable
     reg read0,read1,read2,read3;                                        // Read lines
     reg write0,write1,write2,write3;                                    // Write lines
     reg [6:0] address0,address1,address2,address3;                      // Addresses
@@ -13,7 +13,7 @@ module memory_controller_test;
 
     // Monitoring the output
     always begin
-        #1 $display("\ntime=%d\tclk=%d\ten=%d",$time,clk,en);
+        #1 $display("\ntime=%8d\ten=%d\tclk=%d",$time,en,clk);
     end
 
     // Initialize varibles

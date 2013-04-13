@@ -16,7 +16,7 @@ module test;
 
     // Monitoring the output
     always begin
-        #1 $display("\ntime=%d\tclk=%d\ten=%d",$time,clk,en);
+        #1 $display("\ntime=%8d\ten=%d\tclk=%d",$time,en,clk);
     end
     // Some module
     booth_multiplier BOOTH1(

@@ -10,12 +10,15 @@ module test;
     // Initialize varibles
     initial begin
         #1 r0_state=1; en=1; value1=8'd1; value2=8'd2;clk=0;
+        #20 r0_state=3; en=1; value1=8'd1; value2=8'd2;clk=0;
+        #20 r0_state=0; en=1; value1=8'd1; value2=8'd2;clk=0;
+        #20 en=0;
         #20 $finish;
     end
 
     // Monitoring the output
     always begin
-        #1 $display("\ntime=%8d\tclk=%d\ten=%d",$time,clk,en);
+        #1 $display("\ntime=%8d\ten=%d\tclk=%d",$time,en,clk);
     end
 
     // Some module

@@ -3,7 +3,7 @@ module processor (
    input clk,                       // Clock
    input start,                     // Start Signal
    output output_halt,
-   output cc
+   output [15:0] cc
 );
 
     // For the r0 multiplexer
@@ -149,12 +149,12 @@ module processor (
                         // r0, r1
                     end
                 NEG: begin
-                        // neg of r0
+                        r0_state=R0_NEG;
                     end
                 BGEZ0: begin
                     end
                 BGEZ1: begin
-                    end1234
+                    end
                 MOVE: begin
                         case (ir[3:2])
                             R0: r0=value2(ir);
@@ -190,12 +190,12 @@ module processor (
     end
 
     // Multiplexer for r0
-    module r0_multiplexer (
+    r0_multiplexer R0_MUX(
        .clk(clk),
        .en(r0_multiplexer_en),
        .state(r0_state),
-       .value1(value1(ir)), value2(value1(ir)),
-       .Output1(r0_output1), Output2(r0_output2),
+       .value1(value1(ir)), .value2(value1(ir)),
+       .Output1(r0_output1), .Output2(r0_output2),
        .ready(r0_multiplexer_ready)
     );
 

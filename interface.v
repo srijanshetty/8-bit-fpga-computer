@@ -1,5 +1,5 @@
 //The order of digits are 4321
-module pro_interface(input read,write,dig1,dig2,dig3,dig4,rst,clk,rev,exec,sign, output o1,o2,o3,o4, output [0:6] bcd);
+module interface(input read,write,dig1,dig2,dig3,dig4,rst,clk,rev,exec,sign, output o1,o2,o3,o4, output [0:6] bcd);
 
 //Constants
 localparam RESET=4'd0;

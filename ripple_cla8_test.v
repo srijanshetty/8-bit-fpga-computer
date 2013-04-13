@@ -12,13 +12,14 @@ module test;
     initial begin
         #1 en=0; A=4'd12; B=4'd1; c_in=0;clk=0;
         #2 en=1;
-        #15 en=0;
+        #10 en=0;
+        #5 en=1;
         #2 $finish;
     end
 
     // Monitoring the output
     always begin
-       #1 $display("\ntime=%8d\tclk=%d\ten=%d",$time,clk,en);
+       #1 $display("\ntime=%8d\ten=%d\tclk=%d",$time,en,clk);
     end
 
     // Some module

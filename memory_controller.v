@@ -1,7 +1,7 @@
 // Multiplexer with four lines for accessing the memory
 module memory_controller (
     input clk,                                                              // Clock
-    input state,                                                            // Clock Enable
+    input [1:0] state,                                                            // Clock Enable
     input en,                                                               // Enable
     input read0,read1,read2,read3,                                          // Read lines
     input write0,write1,write2,write3,                                      // Write lines
@@ -142,7 +142,7 @@ module memory_controller (
             input_data=8'dx;
             ready=0;
         end
-        $display("Memory Controller: state=%d\tmemory_en=%d\tmemory_read=%d\tmemory_write=%d\taddress=%d\tinput_data=%d\toutput_data=%d\t", state, memory_en,memory_read,memory_write,address,input_data,data);
+        $display("Memory Controller:\ten=%dstate=%d\tmemory_en=%d\tmemory_read=%d\tmemory_write=%d\taddress=%d\tinput_data=%d\toutput_data=%d\t",en, state, memory_en,memory_read,memory_write,address,input_data,data);
     end
 
     memory MEM1(
