@@ -7,13 +7,14 @@ module processor (
 );
     // For simulation
     initial begin
-        #1 r0_multiplexer_en=0;r0_state=0; pc=0; cc=0;ir=0; fetch_ready=0;execute_ready=0;temp_pc=0; halt=0;
+        #1 r0_multiplexer_en=0;r0_state=0; pc=0; cc=0;ir=0; fetch_ready=0;sleep_count=0;execute_ready=0;temp_pc=0; halt=0;
         #1 memory_controller_en=0;mem_state=0;input_data=0;input_reserve=0;input_data=0; address_data=0; address_reserve=0; address3=0;
         #1 read_ir=0;read_data=0;read_reserve=0;read3=0; write_data=0;write_reserve=0; write3=0; halt=0;
         #1 r2=8'd12; r3=8'd11; r0=8'd0; r1=8'd1;
     end
 
     reg [3:0] count;
+    reg [8:0] sleep_count;
 
     // For the r0 multiplexer
     reg r0_multiplexer_en;
@@ -182,9 +183,9 @@ module processor (
                                         OUT: begin
                                             end
                                         SLEEP:begin
-                                                $display("\nSLEEP\tcount=%d");
-                                                if(count<=r0) begin
-                                                    count=count+1;
+                                                $display("\nSLEEP\tcount=%d",sleep_count);
+                                                if(sleep_count<=r0) begin
+                                                    sleep_count=sleep_count+1;
                                                 end
                                                 else begin
                                                     pc=pc+1;
@@ -420,7 +421,7 @@ module processor (
             else begin
                 r0_multiplexer_en=0;
             end
-            $display("Processor:\ten=%d\tpc=%d\tir=%b\tcc=%d\n\t\t\tr0=%d\tr1=%d\tr2=%d\tr3=%d",en,pc,ir,cc,r0,r1,r2,r3);
+            // $display("Processor:\ten=%d\tpc=%d\tir=%b\tcc=%d\n\t\t\tr0=%d\tr1=%d\tr2=%d\tr3=%d",en,pc,ir,cc,r0,r1,r2,r3);
         end
     end
 
