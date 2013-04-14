@@ -2,16 +2,15 @@ module test;
     // Registers
     reg clk;
     reg en;
-    reg [7:0] A;
-    wire [7:0] Output;         // The read data
-    wire ready;
+    wire halt;
+    wire [15:0] cc;
 
     // Initialize varibles
     initial begin
-        #1 en=0; A=8'd12; clk=0;
-        #2 en=1;
-        #10 en=0;
-        #15 $finish;
+        #1 en=0; clk=0;
+        #5 en=1;
+        #200 en=0;
+        #12 $finish;
     end
 
     // Monitoring the output
@@ -22,13 +21,11 @@ module test;
     end
 
     // Some module
-    // Calling the module
-    twos_compliment TWO(
-        .clk(clk),
-        .en(en),
-        .A(A),
-        .ready(ready),
-        .Output(Output)
+    processor y11_220(
+       .en(en),
+       .clk(clk),
+       .halt(halt),
+       .cc(cc)
     );
 
     //For the clock
@@ -36,4 +33,3 @@ module test;
         #1 clk=!clk;
     end
 endmodule
-

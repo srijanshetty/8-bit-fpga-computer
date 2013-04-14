@@ -5,7 +5,7 @@ module memory_controller (
     input en,                                                               // Enable
     input read0,read1,read2,read3,                                          // Read lines
     input write0,write1,write2,write3,                                      // Write lines
-    input [6:0] address0,address1,address2,address3,                        // Addresses
+    input [7:0] address0,address1,address2,address3,                        // Addresses
     input [7:0] input_data0, input_data1, input_data2,input_data3,          // Input data
     output [7:0] output_data0, output_data1, output_data2, output_data3,    // Output data
     output ready                                                            // Ready
@@ -20,7 +20,7 @@ module memory_controller (
     // For manipulating the memory
     reg memory_en, memory_read, memory_write;
     wire [7:0] data;                                                //The read data
-    reg [6:0] address;                                              //The address
+    reg [7:0] address;                                              //The address
     reg [7:0] input_data;
     reg [7:0] output_data0, output_data1, output_data2,output_data3;
     wire memory_ready;
@@ -135,14 +135,14 @@ module memory_controller (
                                 ready=0;
                             end
              endcase
-            // Displaying the important parameters
         end
         else begin
             memory_en=0;
             input_data=8'dx;
             ready=0;
         end
-        $display("Memory Controller:\ten=%dstate=%d\tmemory_en=%d\tmemory_read=%d\tmemory_write=%d\taddress=%d\tinput_data=%d\toutput_data=%d\t",en, state, memory_en,memory_read,memory_write,address,input_data,data);
+        // Displaying the important parameters
+        // $display("Memory Cont:\ten=%d\tstate=%d\tmemory_en=%d\tmemory_read=%d\tmemory_write=%d\taddress=%d\tinput_data=%d\toutput_data=%d\tready=%d",en, state, memory_en,memory_read,memory_write,address,input_data,data,ready);
     end
 
     memory MEM1(

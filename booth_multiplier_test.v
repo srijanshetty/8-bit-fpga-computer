@@ -15,9 +15,12 @@ module test;
     end
 
     // Monitoring the output
-    always begin
-        #1 $display("\ntime=%8d\ten=%d\tclk=%d",$time,en,clk);
+    always @(clk) begin
+        if($time%2!=0) begin
+            $display("\ntime=%8d\ten=%d\tclk=%d",$time,en,clk);
+        end
     end
+
     // Some module
     booth_multiplier BOOTH1(
         .en(en),

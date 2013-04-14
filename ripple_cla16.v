@@ -36,7 +36,7 @@ module ripple_cla16(
             cla_adder_en=0;
             Output=16'dx;
         end
-        // $display("Ripple CLA16:\ten=%dA=%d\tB=%d\tOutput=%d\tReady=%d",en,A,B,Output,ready);
+        // $display("Ripple CLA16:\ten=%d\tA=%d\tB=%d\tOutput=%d\tReady=%d",en,A,B,Output,ready);
     end
 
     //Xoring the values

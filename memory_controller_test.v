@@ -12,8 +12,10 @@ module memory_controller_test;
     wire [7:0] output_data0, output_data1, output_data2, output_data3;  // Output data
 
     // Monitoring the output
-    always begin
-        #1 $display("\ntime=%8d\ten=%d\tclk=%d",$time,en,clk);
+    always @(clk) begin
+        if($time%2!=0) begin
+            $display("\ntime=%8d\ten=%d\tclk=%d",$time,en,clk);
+        end
     end
 
     // Initialize varibles

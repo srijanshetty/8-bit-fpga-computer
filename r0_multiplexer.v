@@ -37,6 +37,7 @@ module r0_multiplexer (
                         booth_en=0;
                         twos_compliment_en=0;
                         if(ripple_add_ready==1)	begin
+                            Output2=8'dx;
                             Output1=add_output;
 				            ready=1;
                         end
@@ -50,6 +51,7 @@ module r0_multiplexer (
                         twos_compliment_en=0;
                         if(ripple_sub_ready==1) begin
                             Output1=sub_output;
+                            Output2=8'dx;
                             ready=1;
                         end
                         else
@@ -75,6 +77,7 @@ module r0_multiplexer (
                         twos_compliment_en=1;
                         if(twos_compliment_ready==1) begin
                             Output1=complement_output;
+                            Output2=8'dx;
                             ready=1;
                         end
                         else
@@ -96,8 +99,10 @@ module r0_multiplexer (
             ripple_sub_en=0;
             booth_en=0;
             twos_compliment_en=0;
+            Output1=8'dx;
+            Output2=8'dx;
         end
-        $display("R0 MULTIPLEXER:\ten=%d\tstate=%d\tvalue1=%d\tvalue2=%d\tOutput1=%d\tOutput2=%d\tready=%d", en,state,value1,value2,Output1,Output2,ready);
+        // $display("R0 MULTIPLEXER:\ten=%d\tstate=%d\tvalue1=%d\tvalue2=%d\tOutput1=%d\tOutput2=%d\tready=%d", en,state,value1,value2,Output1,Output2,ready);
     end
 
     // Adder
