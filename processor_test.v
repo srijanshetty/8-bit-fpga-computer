@@ -9,7 +9,7 @@ module test;
     initial begin
         #1 en=0; clk=0;
         #5 en=1;
-        #200 en=0;
+        #300 en=0;
         #12 $finish;
     end
 

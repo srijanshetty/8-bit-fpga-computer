@@ -7,7 +7,7 @@ module processor (
 );
     // For simulation
     initial begin
-        #1 r0_multiplexer_en=0;r0_state=0; pc=0; cc=0;ir=0; fetch_ready=0;execute_ready=0;temp_pc=0;
+        #1 r0_multiplexer_en=0;r0_state=0; pc=0; cc=0;ir=0; fetch_ready=0;execute_ready=0;temp_pc=0; halt=0;
         #1 memory_controller_en=0;mem_state=0;input_data=0;input_reserve=0;input_data=0; address_data=0; address_reserve=0; address3=0;
         #1 read_ir=0;read_data=0;read_reserve=0;read3=0; write_data=0;write_reserve=0; write3=0; halt=0;
         #1 r2=8'd12; r3=8'd11; r0=8'd0; r1=8'd1;
@@ -124,243 +124,304 @@ module processor (
 
     //Perform computation
     always @(posedge clk) begin
-        // Fetch Cycle
-        if(execute_ready==1 | en==1) begin
-            if(cc==0) begin
-                fetch_ready=1;
-                execute_ready=0;
-                count=0;
-            end
-            else if(execute_ready==1) begin
-                mem_state=IR;
-                memory_controller_en=1;
-                read_ir=1;
-                if(memory_controller_ready==1) begin
-                    ir=fetch_ir;
-                    memory_controller_en=0;
-                    val1=value1(ir);
-                    val2=value2(ir);
-                    fetch_ready=1;
-                    execute_ready=0;
-            end
-        end
+        if(halt==1) begin
 
-        // Execute Cycle
-        if(fetch_ready==1 & execute_ready==0) begin
-            // At zeroth cycle, we set pc
-            if(cc==0) begin
-                pc=8'd33;
-                cc=cc+1;
-                execute_ready=1;
-                fetch_ready=0;
-            end
-            else begin
-                    cc=cc+1;
-                    case(ir[7:4])
-                        NOP: begin
-                                $display("\nNOP");
-                                case (ir[3:0])
-                                    NOP: begin
-                                            pc=pc+1;
-                                        end
-                                    IN: begin
-                                        end
-                                    OUT: begin
-                                        end
-                                    SLEEP:begin
-                                        end
-                                    HALT: begin
-                                        end
-                                   default : pc=pc+1;
-                                endcase
-                            end
-                        ADD: begin
-                                $display("\nADD");                        // Display mem_state
-                                $display("Processor:\ten=%d\tpc=%d\tir=%b\tcc=%d\n\t\t\tr0=%d\tr1=%d\tr2=%d\tr3=%d",en,pc,ir,cc,r0,r1,r2,r3);
-                                r0_state=R0_ADD;                          // Set multiplexer
-                                r0_multiplexer_en=1;                      // Start multiplexer
-                                if(r0_multiplexer_ready==1) begin
-                                    r0=r0_output1;                        // Latch r0
-                                    r0_multiplexer_en=0;                  // Stop multiplexer
-                                    pc=pc+1;                              // Increment PC
-                                    execute_ready=1;                      // Change to fetch Cycle
-                                    fetch_ready=0;
-                                end
-                            end
-                        ADDi: begin
-                                if(count!=2) begin
-                                    count=count+1;
-                                end
-                                else begin
-                                    $display("\nADDi");
-                                    $display("Processor:\ten=%d\tpc=%d\tir=%b\tcc=%d\n\t\t\tr0=%d\tr1=%d\tr2=%d\tr3=%d",en,pc,ir,cc,r0,r1,r2,r3);
-                                    //Selecting the register on the basis of the select value
-                                    val2=ir[1:0];
-                                    case (ir[3:2])
-                                        R0: r0=r0+val2;
-                                        R1: r1=r1+val2;
-                                        R2: r2=r2+val2;
-                                        R3: r3=r3+val2;
-                                    endcase
-                                    execute_ready=1;                      // Change to fetch Cycle
-                                    fetch_ready=0;
-                                    pc=pc+1;
-                                end                                       // Increment PC
-                            end
-                        SUB: begin
-                                $display("\nSUB");                        // Display mem_state
-                                $display("Processor:\ten=%d\tpc=%d\tir=%b\tcc=%d\n\t\t\tr0=%d\tr1=%d\tr2=%d\tr3=%d",en,pc,ir,cc,r0,r1,r2,r3);
-                                r0_state=R0_SUB;                          // Set multiplexer
-                                r0_multiplexer_en=1;                      // Start multiplexer
-                                if(r0_multiplexer_ready==1) begin
-                                    r0=r0_output1;                        // Latch r0
-                                    r0_multiplexer_en=0;                  // Stop multiplexer
-                                    pc=pc+1;                              // Increment PC
-                                    execute_ready=1;                      // Change to fetch Cycle
-                                    fetch_ready=0;
-                                end
-                            end
-                        MUL: begin
-                                // r0, r1
-                            end
-                        NEG: begin
-                                $display("\nNEG");                        // Display mem_state
-                                $display("Processor:\ten=%d\tpc=%d\tir=%b\tcc=%d\n\t\t\tr0=%d\tr1=%d\tr2=%d\tr3=%d",en,pc,ir,cc,r0,r1,r2,r3);
-                                r0_state=R0_NEG;                          // Set multiplexer
-                                r0_multiplexer_en=1;                      // Start multiplexer
-                                if(r0_multiplexer_ready==1) begin
-                                    r0=r0_output1;                        // Latch r0
-                                    r0_multiplexer_en=0;                  // Stop multiplexer
-                                    pc=pc+1;                              // Increment PC
-                                    execute_ready=1;                      // Change to fetch Cycle
-                                    fetch_ready=0;
-                                end
-                            end
-                        BGEZ0: begin
-                            end
-                        BGEZ1: begin
-                            end
-                        MOVE: begin
-                                if(count!=2) begin
-                                    count=count+1;
-                                end
-                                else begin
-                                    $display("\nMOVE");                    // Display mem_state
-                                    $display("Processor:\ten=%d\tpc=%d\tir=%b\tcc=%d\n\t\t\tr0=%d\tr1=%d\tr2=%d\tr3=%d",en,pc,ir,cc,r0,r1,r2,r3);
-                                    case (ir[3:2])
-                                        R0: r0=val2;
-                                        R1: r1=val2;
-                                        R2: r2=val2;
-                                        R3: r3=val2;
-                                    endcase
-                                    execute_ready=1;                        // Change to fetch Cycle
-                                    fetch_ready=0;
-                                    pc=pc+1;
-                                end                                         // Incrementing PC
-                            end
-                        STORE: begin
-                                if(count<=5) begin
-                                    count=count+1;
-                                    memory_controller_en=0;
-                                    read_data=0;
-                                    write_data=1;
-                                    temp_address=val1;
-                                    mem_state=DATA;
-                                end
-                                else if (count<=8) begin
-                                    $display("\nSTORE\taddress_data=%b",address_data);
-                                    $display("Processor:\ten=%d\tpc=%d\tir=%b\tcc=%d\n\t\t\tr0=%d\tr1=%d\tr2=%d\tr3=%d",en,pc,ir,cc,r0,r1,r2,r3);
-                                    address_data=temp_address;
-                                    memory_controller_en=1;
-                                    input_data=val2;
-                                    if(memory_controller_ready==1) begin
-                                        memory_controller_en=0;
-                                        count=count+1;
-                                    end
-                                end
-                                else begin
-                                    pc=pc+1;
-                                    execute_ready=1;
-                                    fetch_ready=0;
-                                end
-                            end
-                        LOAD: begin
-                                if(count<=1) begin
-                                    count=count+1;
-                                    memory_controller_en=0;
-                                    read_data=1;
-                                    write_data=0;
-                                    mem_state=DATA;
-                                    temp_address={2'b00,r3[1:0],ir[3:0]};
-                                end
-                                else if (count<=3) begin
-                                    $display("\nLOAD\taddress_data=%b",address_data);
-                                    $display("Processor:\ten=%d\tpc=%d\tir=%b\tcc=%d\n\t\t\tr0=%d\tr1=%d\tr2=%d\tr3=%d",en,pc,ir,cc,r0,r1,r2,r3);
-                                    address_data=temp_address;
-                                    memory_controller_en=1;
-                                    if(memory_controller_ready==1) begin
-                                        r0=output_data;
-                                        memory_controller_en=0;
-                                        count=count+1;
-                                    end
-                                end
-                                else begin
-                                    pc=pc+1;
-                                    execute_ready=1;
-                                    fetch_ready=0;
-                                end
-                            end
-                        LOADi: begin
-                                $display("\nLOADi");                    // Display mem_state
-                                $display("Processor:\ten=%d\tpc=%d\tir=%b\tcc=%d\n\t\t\tr0=%d\tr1=%d\tr2=%d\tr3=%d",en,pc,ir,cc,r0,r1,r2,r3);
-                                if(count!=2) begin
-                                    count=count+1;
-                                end
-                                else begin
-                                    case (ir[3:2])
-                                        R0: r0=ir[1:0];
-                                        R1: r1=ir[1:0];
-                                        R2: r2=ir[1:0];
-                                        R3: r3=ir[1:0];
-                                    endcase
-                                    count=0;
-                                    pc=pc+1;                                 // Incrementing PC
-                                    execute_ready=1;                         // Change to fetch Cycle
-                                    fetch_ready=0;
-                                end
-                            end
-                        JUMP: begin
-                                if(count<=7) begin
-                                    count=count+1;
-                                    case (ir[3:2])
-                                        R0: temp_pc=r0;
-                                        R1: temp_pc=r1;
-                                        R2: temp_pc=r2;
-                                    endcase
-                                    r3=pc+1;
-                                end
-                                else if (count<=12) begin
-                                    $display("\nJUMP");                       // Display mem_state
-                                    $display("Processor:\ten=%d\tpc=%d\tir=%b\tcc=%d\n\t\t\tr0=%d\tr1=%d\tr2=%d\tr3=%d",en,pc,ir,cc,r0,r1,r2,r3);
-                                    pc=temp_pc;
-                                    count=count+1;
-                                end
-                                else begin
-                                    execute_ready=1;                           // Change to fetch Cycle
-                                    fetch_ready=0;
-                                end
-                            end
-                        default: begin
-                                    r0_multiplexer_en=0;
-                                end
-                    endcase
-                end
-            end
         end
         else begin
-            r0_multiplexer_en=0;
+            // Fetch Cycle
+            if(execute_ready==1 | en==1) begin
+                if(cc==0) begin
+                    fetch_ready=1;
+                    execute_ready=0;
+                    count=0;
+                end
+                else if(execute_ready==1) begin
+                    mem_state=IR;
+                    memory_controller_en=1;
+                    read_ir=1;
+                    if(memory_controller_ready==1) begin
+                        ir=fetch_ir;
+                        memory_controller_en=0;
+                        val1=value1(ir);
+                        val2=value2(ir);
+                        fetch_ready=1;
+                        execute_ready=0;
+                end
+            end
+
+            // Execute Cycle
+            if(fetch_ready==1 & execute_ready==0) begin
+                // At zeroth cycle, we set pc
+                if(cc==0) begin
+                    pc=8'd33;
+                    cc=cc+1;
+                    execute_ready=1;
+                    fetch_ready=0;
+                end
+                else begin
+                        cc=cc+1;
+                        case(ir[7:4])
+                            NOP: begin
+                                    $display("\nNOP");
+                                    case (ir[3:0])
+                                        NOP: begin
+                                                if(count==0) begin
+                                                    pc=pc+1;
+                                                    count=count+1;
+                                                    fetch_ready=0;
+                                                    execute_ready=1;
+                                                end
+                                                else if(count==2) begin
+                                                    count=0;
+                                                end
+                                                else
+                                                    count=count+1;
+                                            end
+                                        IN: begin
+                                            end
+                                        OUT: begin
+                                            end
+                                        SLEEP:begin
+                                                $display("\nSLEEP\tcount=%d");
+                                                if(count<=r0) begin
+                                                    count=count+1;
+                                                end
+                                                else begin
+                                                    pc=pc+1;
+                                                    fetch_ready=0;
+                                                    execute_ready=1;
+                                                end
+                                            end
+                                        HALT: begin
+                                                halt=1;
+                                                fetch_ready=0;
+                                                execute_ready=1;
+                                            end
+                                       default : begin
+                                                    pc=pc+1;
+                                                end
+                                    endcase
+                                end
+                            ADD: begin
+                                    $display("\nADD");                        // Display mem_state
+                                    $display("Processor:\ten=%d\tpc=%d\tir=%b\tcc=%d\n\t\t\tr0=%d\tr1=%d\tr2=%d\tr3=%d",en,pc,ir,cc,r0,r1,r2,r3);
+                                    r0_state=R0_ADD;                          // Set multiplexer
+                                    r0_multiplexer_en=1;                      // Start multiplexer
+                                    if(r0_multiplexer_ready==1) begin
+                                        r0=r0_output1;                        // Latch r0
+                                        r0_multiplexer_en=0;                  // Stop multiplexer
+                                        pc=pc+1;                              // Increment PC
+                                        execute_ready=1;                      // Change to fetch Cycle
+                                        fetch_ready=0;
+                                    end
+                                end
+                            ADDi: begin
+                                    if(count!=2) begin
+                                        count=count+1;
+                                    end
+                                    else begin
+                                        $display("\nADDi");
+                                        $display("Processor:\ten=%d\tpc=%d\tir=%b\tcc=%d\n\t\t\tr0=%d\tr1=%d\tr2=%d\tr3=%d",en,pc,ir,cc,r0,r1,r2,r3);
+                                        //Selecting the register on the basis of the select value
+                                        val2=ir[1:0];
+                                        case (ir[3:2])
+                                            R0: r0=r0+val2;
+                                            R1: r1=r1+val2;
+                                            R2: r2=r2+val2;
+                                            R3: r3=r3+val2;
+                                        endcase
+                                        execute_ready=1;                      // Change to fetch Cycle
+                                        fetch_ready=0;
+                                        pc=pc+1;
+                                    end                                       // Increment PC
+                                end
+                            SUB: begin
+                                    $display("\nSUB");                        // Display mem_state
+                                    $display("Processor:\ten=%d\tpc=%d\tir=%b\tcc=%d\n\t\t\tr0=%d\tr1=%d\tr2=%d\tr3=%d",en,pc,ir,cc,r0,r1,r2,r3);
+                                    r0_state=R0_SUB;                          // Set multiplexer
+                                    r0_multiplexer_en=1;                      // Start multiplexer
+                                    if(r0_multiplexer_ready==1) begin
+                                        r0=r0_output1;                        // Latch r0
+                                        r0_multiplexer_en=0;                  // Stop multiplexer
+                                        pc=pc+1;                              // Increment PC
+                                        execute_ready=1;                      // Change to fetch Cycle
+                                        fetch_ready=0;
+                                    end
+                                end
+                            MUL: begin
+                                    // r0, r1
+                                end
+                            NEG: begin
+                                    $display("\nNEG");                        // Display mem_state
+                                    $display("Processor:\ten=%d\tpc=%d\tir=%b\tcc=%d\n\t\t\tr0=%d\tr1=%d\tr2=%d\tr3=%d",en,pc,ir,cc,r0,r1,r2,r3);
+                                    r0_state=R0_NEG;                          // Set multiplexer
+                                    r0_multiplexer_en=1;                      // Start multiplexer
+                                    if(r0_multiplexer_ready==1) begin
+                                        r0=r0_output1;                        // Latch r0
+                                        r0_multiplexer_en=0;                  // Stop multiplexer
+                                        pc=pc+1;                              // Increment PC
+                                        execute_ready=1;                      // Change to fetch Cycle
+                                        fetch_ready=0;
+                                    end
+                                end
+                            BGEZ0: begin
+                                    if(r0>=0) begin
+                                        if(count<=7) begin
+                                            count=count+1;
+                                            temp_address={3'b000,ir[3:0],1'b0};
+                                        end
+                                        else if(count<=12) begin
+                                            $display("\nBRANCH\taddress_data=%b",temp_address);
+                                            $display("Processor:\ten=%d\tpc=%d\tir=%b\tcc=%d\n\t\t\tr0=%d\tr1=%d\tr2=%d\tr3=%d",en,pc,ir,cc,r0,r1,r2,r3);
+                                            pc=temp_address;
+                                            count=count+1;
+                                        end
+                                        else begin
+                                            execute_ready=1;
+                                            fetch_ready=0;
+                                        end
+                                    end
+                                end
+                            BGEZ1: begin
+                                    if(r0>=0) begin
+                                        if(count<=7) begin
+                                            count=count+1;
+                                            temp_address={3'b001,ir[3:0],1'b0};
+                                        end
+                                        else if(count<=12) begin
+                                            $display("\nBRANCH\taddress_data=%b",temp_address);
+                                            $display("Processor:\ten=%d\tpc=%d\tir=%b\tcc=%d\n\t\t\tr0=%d\tr1=%d\tr2=%d\tr3=%d",en,pc,ir,cc,r0,r1,r2,r3);
+                                            pc=temp_address;
+                                            count=count+1;
+                                        end
+                                        else begin
+                                            execute_ready=1;
+                                            fetch_ready=0;
+                                        end
+                                    end
+                                end
+                            MOVE: begin
+                                    if(count!=2) begin
+                                        count=count+1;
+                                    end
+                                    else begin
+                                        $display("\nMOVE");                    // Display mem_state
+                                        $display("Processor:\ten=%d\tpc=%d\tir=%b\tcc=%d\n\t\t\tr0=%d\tr1=%d\tr2=%d\tr3=%d",en,pc,ir,cc,r0,r1,r2,r3);
+                                        case (ir[3:2])
+                                            R0: r0=val2;
+                                            R1: r1=val2;
+                                            R2: r2=val2;
+                                            R3: r3=val2;
+                                        endcase
+                                        execute_ready=1;                        // Change to fetch Cycle
+                                        fetch_ready=0;
+                                        pc=pc+1;
+                                    end                                         // Incrementing PC
+                                end
+                            STORE: begin
+                                    if(count<=5) begin
+                                        count=count+1;
+                                        memory_controller_en=0;
+                                        read_data=0;
+                                        write_data=1;
+                                        temp_address=val1;
+                                        mem_state=DATA;
+                                    end
+                                    else if (count<=8) begin
+                                        $display("\nSTORE\taddress_data=%b",address_data);
+                                        $display("Processor:\ten=%d\tpc=%d\tir=%b\tcc=%d\n\t\t\tr0=%d\tr1=%d\tr2=%d\tr3=%d",en,pc,ir,cc,r0,r1,r2,r3);
+                                        address_data=temp_address;
+                                        memory_controller_en=1;
+                                        input_data=val2;
+                                        if(memory_controller_ready==1) begin
+                                            memory_controller_en=0;
+                                            count=count+1;
+                                        end
+                                    end
+                                    else begin
+                                        pc=pc+1;
+                                        execute_ready=1;
+                                        fetch_ready=0;
+                                    end
+                                end
+                            LOAD: begin
+                                    if(count<=1) begin
+                                        count=count+1;
+                                        memory_controller_en=0;
+                                        read_data=1;
+                                        write_data=0;
+                                        mem_state=DATA;
+                                        temp_address={2'b00,r3[1:0],ir[3:0]};
+                                    end
+                                    else if (count<=3) begin
+                                        $display("\nLOAD\taddress_data=%b",address_data);
+                                        $display("Processor:\ten=%d\tpc=%d\tir=%b\tcc=%d\n\t\t\tr0=%d\tr1=%d\tr2=%d\tr3=%d",en,pc,ir,cc,r0,r1,r2,r3);
+                                        address_data=temp_address;
+                                        memory_controller_en=1;
+                                        if(memory_controller_ready==1) begin
+                                            r0=output_data;
+                                            memory_controller_en=0;
+                                            count=count+1;
+                                        end
+                                    end
+                                    else begin
+                                        pc=pc+1;
+                                        execute_ready=1;
+                                        fetch_ready=0;
+                                    end
+                                end
+                            LOADi: begin
+                                    $display("\nLOADi");                    // Display mem_state
+                                    $display("Processor:\ten=%d\tpc=%d\tir=%b\tcc=%d\n\t\t\tr0=%d\tr1=%d\tr2=%d\tr3=%d",en,pc,ir,cc,r0,r1,r2,r3);
+                                    if(count!=2) begin
+                                        count=count+1;
+                                    end
+                                    else begin
+                                        case (ir[3:2])
+                                            R0: r0=ir[1:0];
+                                            R1: r1=ir[1:0];
+                                            R2: r2=ir[1:0];
+                                            R3: r3=ir[1:0];
+                                        endcase
+                                        count=0;
+                                        pc=pc+1;                                 // Incrementing PC
+                                        execute_ready=1;                         // Change to fetch Cycle
+                                        fetch_ready=0;
+                                    end
+                                end
+                            JUMP: begin
+                                    if(count<=7) begin
+                                        count=count+1;
+                                        case (ir[3:2])
+                                            R0: temp_pc=r0;
+                                            R1: temp_pc=r1;
+                                            R2: temp_pc=r2;
+                                        endcase
+                                        r3=pc+1;
+                                    end
+                                    else if (count<=12) begin
+                                        $display("\nJUMP");                       // Display mem_state
+                                        $display("Processor:\ten=%d\tpc=%d\tir=%b\tcc=%d\n\t\t\tr0=%d\tr1=%d\tr2=%d\tr3=%d",en,pc,ir,cc,r0,r1,r2,r3);
+                                        pc=temp_pc;
+                                        count=count+1;
+                                    end
+                                    else begin
+                                        execute_ready=1;                           // Change to fetch Cycle
+                                        fetch_ready=0;
+                                    end
+                                end
+                            default: begin
+                                        r0_multiplexer_en=0;
+                                    end
+                        endcase
+                    end
+                end
+            end
+            else begin
+                r0_multiplexer_en=0;
+            end
+            $display("Processor:\ten=%d\tpc=%d\tir=%b\tcc=%d\n\t\t\tr0=%d\tr1=%d\tr2=%d\tr3=%d",en,pc,ir,cc,r0,r1,r2,r3);
         end
-        // $display("Processor:\ten=%d\tpc=%d\tir=%b\tcc=%d\n\t\t\tr0=%d\tr1=%d\tr2=%d\tr3=%d",en,pc,ir,cc,r0,r1,r2,r3);
     end
 
     // Multiplexer for r0
@@ -385,4 +446,13 @@ module processor (
         .output_data0(fetch_ir), .output_data1(output_data), .output_data2(output_reserve), .output_data3(output_data3),
         .ready(memory_controller_ready)
     );
+
+    // // Display module
+    // module display_module (
+    //     .clk(clk),
+    //     .en(display_en),
+    //     .b1(b1),.b2(b2), .b3(b3), .b4(b4),
+    //     .o1(o1),.o2(o2),.o3(o3),.o4(o4),
+    //     .bcd(bcd)
+    // );
 endmodule

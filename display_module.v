@@ -2,21 +2,14 @@ module display_module (
 	input clk, // Clock
 	input en, //Enable
   	input [6:0] b1,b2,b3,b4, //For storing the bcd display
-  	output output_o1,output_o2,output_o3,output_o4,
-  	output [0:6] output_bcd
+  	output o1,o2,o3,o4,
+  	output [0:6] bcd
 );
 
 	//Required values
 	reg o1,o2,o3,o4;
 	reg [0:6] bcd;
 	reg [63:0] display_count;//Clock counts
-
-	//Assigning values to the wires
-	assign output_o1=o1;
-	assign output_o2=o2;
-	assign output_o3=o3;
-	assign output_o4=o4;
-	assign output_bcd=bcd;
 
 	always @(posedge clk)
 	begin
