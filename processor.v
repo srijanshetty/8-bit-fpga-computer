@@ -7,7 +7,7 @@ module processor (
 );
     // For simulation
     initial begin
-        #1 r0_multiplexer_en=0;r0_state=0; pc=0; cc=0;ir=0; fetch_ready=0;execute_ready=0;temp_pc=0; halt=0;
+        #1 r0_multiplexer_en=0;r0_state=0; pc=0; cc=0;ir=0; fetch_ready=0;execute_ready=0;temp_pc=0; halt=0;val3=0;
         #1 memory_controller_en=0;mem_state=0;input_data=0;input_reserve=0;input_data=0; address_data=0; address_reserve=0; address3=0;
         #1 read_ir=0;read_data=0;read_reserve=0;read3=0; write_data=0;write_reserve=0; write3=0; halt=0;
         #1 r2=8'd12; r3=8'd11; r0=8'd0; r1=8'd1;
@@ -35,6 +35,7 @@ module processor (
 
     // Registers available to the user
     reg [7:0] r0,r1,r2,r3;
+    reg [1:0] val3;
 
     // For manipulating the memory
     reg memory_controller_en;
@@ -136,6 +137,7 @@ module processor (
                     count=0;
                 end
                 else if(execute_ready==1) begin
+                    count=0;
                     mem_state=IR;
                     memory_controller_en=1;
                     read_ir=1;
@@ -146,6 +148,7 @@ module processor (
                         val2=value2(ir);
                         fetch_ready=1;
                         execute_ready=0;
+                        $display("Fetch:\tval1=%d\tval2=%d",val1,val2);
                 end
             end
 
@@ -223,7 +226,7 @@ module processor (
                                         $display("\nADDi");
                                         $display("Processor:\ten=%d\tpc=%d\tir=%b\tcc=%d\n\t\t\tr0=%d\tr1=%d\tr2=%d\tr3=%d",en,pc,ir,cc,r0,r1,r2,r3);
                                         //Selecting the register on the basis of the select value
-                                        val2=ir[1:0];
+                                        val3=ir[1:0];
                                         case (ir[3:2])
                                             R0: r0=r0+val2;
                                             R1: r1=r1+val2;
@@ -373,18 +376,21 @@ module processor (
                             LOADi: begin
                                     $display("\nLOADi");                    // Display mem_state
                                     $display("Processor:\ten=%d\tpc=%d\tir=%b\tcc=%d\n\t\t\tr0=%d\tr1=%d\tr2=%d\tr3=%d",en,pc,ir,cc,r0,r1,r2,r3);
-                                    if(count!=2) begin
+                                    if(count<=4) begin
+                                        count=count+1;
+                                        val3=ir[1:0];
+                                    end
+                                    else if(count==5) begin
+                                        pc=pc+1;
                                         count=count+1;
                                     end
                                     else begin
                                         case (ir[3:2])
-                                            R0: r0=ir[1:0];
-                                            R1: r1=ir[1:0];
-                                            R2: r2=ir[1:0];
-                                            R3: r3=ir[1:0];
-                                        endcase
-                                        count=0;
-                                        pc=pc+1;                                 // Incrementing PC
+                                            R0: r0=val3;
+                                            R1: r1=val3;
+                                            R2: r2=val3;
+                                            R3: r3=val3;
+                                        endcase                                // Incrementing PC
                                         execute_ready=1;                         // Change to fetch Cycle
                                         fetch_ready=0;
                                     end
