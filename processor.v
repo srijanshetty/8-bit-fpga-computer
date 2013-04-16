@@ -427,7 +427,7 @@ module processor (
             else begin
                 r0_multiplexer_en=0;
             end
-            // $display("Processor:\ten=%d\tpc=%d\tir=%b\tcc=%d\n\t\t\tr0=%d\tr1=%d\tr2=%d\tr3=%d",en,pc,ir,cc,r0,r1,r2,r3);
+            $display("Processor:\ten=%d\tpc=%d\tir=%b\tcc=%d\n\t\t\tr0=%d\tr1=%d\tr2=%d\tr3=%d",en,pc,ir,cc,r0,r1,r2,r3);
         end
     end
 
