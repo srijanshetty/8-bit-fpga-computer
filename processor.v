@@ -172,14 +172,12 @@ module processor (
                                                 if(count==0) begin
                                                     pc=pc+1;
                                                     count=count+1;
+                                                end
+                                                else begin
                                                     fetch_ready=0;
                                                     execute_ready=1;
-                                                end
-                                                else if(count==2) begin
-                                                    count=0;
-                                                end
-                                                else
                                                     count=count+1;
+                                                end
                                             end
                                         IN: begin
                                             end
@@ -229,10 +227,10 @@ module processor (
                                         //Selecting the register on the basis of the select value
                                         val3=ir[1:0];
                                         case (ir[3:2])
-                                            R0: r0=r0+val2;
-                                            R1: r1=r1+val2;
-                                            R2: r2=r2+val2;
-                                            R3: r3=r3+val2;
+                                            R0: r0=r0+val3;
+                                            R1: r1=r1+val3;
+                                            R2: r2=r2+val3;
+                                            R3: r3=r3+val3;
                                         endcase
                                         execute_ready=1;                      // Change to fetch Cycle
                                         fetch_ready=0;
@@ -253,7 +251,18 @@ module processor (
                                     end
                                 end
                             MUL: begin
-                                    // r0, r1
+                                    $display("\nMUL");                        // Display mem_state
+                                    $display("Processor:\ten=%d\tpc=%d\tir=%b\tcc=%d\n\t\t\tr0=%d\tr1=%d\tr2=%d\tr3=%d",en,pc,ir,cc,r0,r1,r2,r3);
+                                    r0_state=R0_MUL;                          // Set multiplexer
+                                    r0_multiplexer_en=1;                      // Start multiplexer
+                                    if(r0_multiplexer_ready==1) begin
+                                        r0=r0_output1;                        // Latch r0
+                                        r1=r0_output2;
+                                        r0_multiplexer_en=0;                  // Stop multiplexer
+                                        pc=pc+1;                              // Increment PC
+                                        execute_ready=1;                      // Change to fetch Cycle
+                                        fetch_ready=0;
+                                    end
                                 end
                             NEG: begin
                                     $display("\nNEG");                        // Display mem_state

@@ -51,7 +51,6 @@ module r0_multiplexer (
                         twos_compliment_en=0;
                         if(ripple_sub_ready==1) begin
                             Output1=sub_output;
-                            Output2=8'dx;
                             ready=1;
                         end
                         else
@@ -63,8 +62,8 @@ module r0_multiplexer (
                         booth_en=1;
                         twos_compliment_en=0;
                         if(booth_ready==1) begin
-                            Output1=multiplier_output[15:8];
-                            Output2=multiplier_output[7:0];
+                            Output1=multiplier_output[7:0];
+                            Output2=multiplier_output[15:8];
                             ready=1;
                         end
                         else
@@ -77,7 +76,6 @@ module r0_multiplexer (
                         twos_compliment_en=1;
                         if(twos_compliment_ready==1) begin
                             Output1=complement_output;
-                            Output2=8'dx;
                             ready=1;
                         end
                         else
@@ -99,8 +97,6 @@ module r0_multiplexer (
             ripple_sub_en=0;
             booth_en=0;
             twos_compliment_en=0;
-            Output1=8'dx;
-            Output2=8'dx;
         end
         // $display("R0 MULTIPLEXER:\ten=%d\tstate=%d\tvalue1=%d\tvalue2=%d\tOutput1=%d\tOutput2=%d\tready=%d", en,state,value1,value2,Output1,Output2,ready);
     end
@@ -127,13 +123,14 @@ module r0_multiplexer (
         .ready(ripple_sub_ready)
     );
 
-    // // Multiplier
-    // booth_multiplier Booth(
-    //     .clk(clk),
-    //     .en(booth_en),
-    //     .A(value1),.B(value2),
-    //     .Output(multiplier_output),.ready(booth_ready)
-    // );
+    // Multiplier
+    booth_multiplier Booth(
+        .clk(clk),
+        .en(booth_en),
+        .A(value1),.B(value2),
+        .Output(multiplier_output),
+        .ready(booth_ready)
+    );
 
     // Compliment
     twos_compliment Compliment(
