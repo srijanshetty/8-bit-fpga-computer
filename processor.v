@@ -14,6 +14,7 @@ module processor (
     end
 
     reg [3:0] count;
+    reg [8:0] sleep_count;
 
     // For the r0 multiplexer
     reg r0_multiplexer_en;
@@ -185,9 +186,9 @@ module processor (
                                         OUT: begin
                                             end
                                         SLEEP:begin
-                                                $display("\nSLEEP\tcount=%d");
-                                                if(count<=r0) begin
-                                                    count=count+1;
+                                                $display("\nSLEEP\tcount=%d",sleep_count);
+                                                if(sleep_count<=r0) begin
+                                                    sleep_count=sleep_count+1;
                                                 end
                                                 else begin
                                                     pc=pc+1;
@@ -426,7 +427,7 @@ module processor (
             else begin
                 r0_multiplexer_en=0;
             end
-            $display("Processor:\ten=%d\tpc=%d\tir=%b\tcc=%d\n\t\t\tr0=%d\tr1=%d\tr2=%d\tr3=%d",en,pc,ir,cc,r0,r1,r2,r3);
+            // $display("Processor:\ten=%d\tpc=%d\tir=%b\tcc=%d\n\t\t\tr0=%d\tr1=%d\tr2=%d\tr3=%d",en,pc,ir,cc,r0,r1,r2,r3);
         end
     end
 
